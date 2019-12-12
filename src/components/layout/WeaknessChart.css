@@ -1,0 +1,11 @@
+.cell{
+  min-height: 35px;
+  min-width: 35px;
+  max-width: 35px;
+  max-height: 35px;
+  border: solid;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  padding-top: 9px;
+}
