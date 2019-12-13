@@ -12,13 +12,14 @@ const Card = styled.div`
   &:hover {
     box-shadow: -1px 16px 10px -2px rgba(161,161,161,0.75);
   }
-  min-width: 150px;
+  min-width: 130px;
+  max-width: 150px;
 `;
 
 interface Props{
   name: string,
   url: string,
-  typeHandler: (pokemonType: string[])=>void,
+  typeHandler: (pokemonType: string[], imageUrl: string, selectedName: string)=>void,
   hide: boolean,
 }
 interface Type{
@@ -75,7 +76,6 @@ export const PokemonCard: React.FC<Props> = ({name, url, typeHandler, hide}) => 
     }
 
     function getTypes() {
-      console.log("Getting Type")
       fetch(url)
      .then(result => result.json())
      .then(async (result) =>
@@ -87,13 +87,13 @@ export const PokemonCard: React.FC<Props> = ({name, url, typeHandler, hide}) => 
   },[]);
 
   function handleClick(){
-    typeHandler(pokemonType);
+    typeHandler(pokemonType, imageUrl, name);
   }
 
   return (
-    <div className="col-md-3 col-sm-6 mb-5" style={{display: hide? 'none' : ''}}>
-      <Card className="card" onClick={handleClick}>
-        <h6 className="card-header py-1">
+    <div className="col-md-3 col-sm-6 mb-5 " style={{minWidth: '100px', display: hide? 'none' : ''}}>
+      <Card className="card mx-auto" onClick={handleClick}>
+        <h6 className="card-header py-0 pl-2">
           {pokemonIndex}
         </h6>
         <Sprite className="card-img-top rounded mx-auto mt-2"
@@ -104,7 +104,7 @@ export const PokemonCard: React.FC<Props> = ({name, url, typeHandler, hide}) => 
         .map(letters => letters.charAt(0).toUpperCase() + letters.substring(1))
         .join(' ')}</h6>
         <div className="mx-auto mb-2">
-        {pokemonType.map((type : string) => (<span className="mx-1 badge badge-pill badge-danger"
+        {pokemonType.map((type : string) => (<span key = {type} className="mx-1 badge badge-pill badge-danger"
         style = {{backgroundColor: `${(Colors as any)[type]}`}}>{type}</span>))}
         </div>
       </Card>

@@ -8,7 +8,7 @@ type Pokemon = {
 }
 
 interface Props {
-  typeHandler: (pokemonType: string[])=>void,
+  typeHandler: (pokemonType: string[], imageUrl: string, selectedName: string)=>void,
   pokemon: Pokemon[]
 }
 

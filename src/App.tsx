@@ -5,11 +5,11 @@ import Panel from './components/layout/Panel'
 import './App.css'
 import { render } from '@testing-library/react';
 const Resistances = {
+  fairy: 0,
   bug: 0,
   dark: 0,
   dragon: 0,
   electric: 0,
-  fairy: 0,
   fighting: 0,
   fire: 0,
   flying: 0,
@@ -29,8 +29,14 @@ interface Props {
 }
 interface State {
   weaknesses: {},
-  selectedTypes: string[]
+  selectedPokemon: selectedPokemon,
   pokemon: Pokemon[]
+}
+
+interface selectedPokemon {
+  selectedTypes: string[],
+  imageUrl: string,
+  name: string,
 }
 
 type Pokemon = {
@@ -44,7 +50,7 @@ class App extends React.Component<Props, State>{
   permPokemon : Pokemon[] = [];
   state = {
     weaknesses: Resistances,
-    selectedTypes: [""],
+    selectedPokemon: {selectedTypes:["grass","poison"], imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png?raw=true", name:"Bulbasaur"},
     pokemon: [],
   }
 
@@ -61,61 +67,58 @@ class App extends React.Component<Props, State>{
 
   componentDidMount() {
     //get Pokemon
-    const url = "https://pokeapi.co/api/v2/pokemon?limit=400";
+    const url = "https://pokeapi.co/api/v2/pokemon?limit=30";
     fetch(url)
       .then(result => result.json())
       .then(result => {
         this.setState({ pokemon: result.results })
         this.permPokemon = result.results;
     })
+    this.getWeakness(["grass","poison"])
   }
 
-  typeHandler = (pokemonType: string[]) => {
+  typeHandler = (pokemonType: string[], imageUrl: string, selectedName: string) => {
     //console.log(pokemonType);
     this.getWeakness(pokemonType);
-    this.setState({ selectedTypes: pokemonType })
+    this.setState({ selectedPokemon: {selectedTypes: pokemonType, imageUrl: imageUrl, name: selectedName} })
   }
 
   getWeakness = async (pokemonType: string[]) => {
-    const weakness = Resistances;
-    pokemonType.map(async (type) => await fetch(`${this.baseUrl}type/${type}`)
-      .then(result => result.json())
-      .then(result => {
-        result.damage_relations.double_damage_from.map((weaknessType: { name: string }) =>
-          this.setState((prevState: State) => {
-            let weaknesses = Object.assign({}, prevState.weaknesses);  // creating copy of state variable jasper
-            (weaknesses as any)[weaknessType.name] = (weaknesses as any)[weaknessType.name] + 1;                     // update the name property, assign a new value   
-            return { weaknesses };                                 // return new object jasper object
-          }))
-        result.damage_relations.half_damage_from.map((weaknessType: { name: string }) =>
-          this.setState((prevState: State) => {
-            let weaknesses = Object.assign({}, prevState.weaknesses);  // creating copy of state variable jasper
-            (weaknesses as any)[weaknessType.name] = (weaknesses as any)[weaknessType.name] - 1;                     // update the name property, assign a new value   
-            return { weaknesses };                                 // return new object jasper object
-          })
-        )
-      }
-      ));
+    let weakness = Object.assign({}, Resistances);
+    pokemonType.map((type) => fetch(`${this.baseUrl}type/${type}`)
+    .then(result => result.json())
+    .then(function(result) {
+      result.damage_relations.double_damage_from.map((weaknessType:{name:string}) =>  {
+        (weakness as any)[weaknessType.name] = (weakness as any)[weaknessType.name] + 1;}) 
+      result.damage_relations.half_damage_from.map((weaknessType:{name:string}) => {
+        (weakness as any)[weaknessType.name] = (weakness as any)[weaknessType.name] - 1;})
+      result.damage_relations.no_damage_from.map((weaknessType:{name:string}) => {
+        (weakness as any)[weaknessType.name] = (weakness as any)[weaknessType.name] - 4;})
+        return weakness
+      }).then(result => {
+        console.log("setting weakness")
+        this.setState({weaknesses: result})})
+      )
   }
 
   render() {
     return (
       <div className="App">
-        <div className='container'>
+        <div className='container' style={{minWidth:'90%'}}>
           <div className="row">
             <div className="col-12" style={{ backgroundColor: 'gray', minHeight: '70px' }}>
               Hello
           </div>
           </div>
           <div className="row mt-3">
-            <div className="col-9" style={{ backgroundColor: 'white', minHeight: '85vh', maxHeight: '85vh' }}>
+            <div className="col-9 pl-0" style={{ backgroundColor: 'white', minHeight: '85vh', maxHeight: '85vh' }}>
               <div className="container px-5 py-3 overflow-auto card" style={{ backgroundColor: 'white', minHeight: '100%', maxHeight: '100%' }}>
                 <div className="row justify-content-md-center">
                   <DashBoard pokemon={this.state.pokemon} typeHandler={this.typeHandler} />
                 </div>
               </div>
             </div>
-            <Panel filterPokemon = {this.filterPokemon} weakness={this.state.weaknesses} selectedTypes={this.state.selectedTypes}></Panel>
+            <Panel filterPokemon = {this.filterPokemon} weakness={this.state.weaknesses} selectedPokemon={this.state.selectedPokemon}></Panel>
           </div>
         </div>
       </div>)

@@ -6,7 +6,7 @@ type Pokemon = {
   hide: boolean
 }
 interface Props{
-  typeHandler: (pokemonType: string[])=>void,
+  typeHandler: (pokemonType: string[], imageUrl: string, selectedName: string)=>void,
   pokemon: Pokemon[]
 }
 export const PokemonList: React.FC<Props> = ({typeHandler, pokemon}) => {
