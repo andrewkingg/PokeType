@@ -9,7 +9,7 @@ type Pokemon = {
 
 interface Props {
   typeHandler: (pokemonType: string[], imageUrl: string, selectedName: string)=>void,
-  pokemon: Pokemon[]
+  pokemon: Pokemon[],
 }
 
 export const Dashboard: React.FC<Props>= ({typeHandler, pokemon}) => {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
 
 const Sprite = styled.img`
@@ -59,7 +59,7 @@ export const PokemonCard: React.FC<Props> = ({name, url, typeHandler, hide}) => 
 
     async function formatTypes(types: Types[]){
       let finalType : string[] = []
-    //  types.sort(sortTypes);
+      //types.sort(sortTypes);
       types.map(type => finalType.push(type.type.name));
       setType(finalType)
       return;
@@ -76,7 +76,7 @@ export const PokemonCard: React.FC<Props> = ({name, url, typeHandler, hide}) => 
     }
 
     function getTypes() {
-      fetch(url)
+      fetch(url, {cache: "force-cache"})
      .then(result => result.json())
      .then(async (result) =>
       await formatTypes(result.types))
@@ -84,26 +84,22 @@ export const PokemonCard: React.FC<Props> = ({name, url, typeHandler, hide}) => 
 
       getTypes();   
      
-  },[]);
+  },[url]);
 
   function handleClick(){
     typeHandler(pokemonType, imageUrl, name);
   }
 
   return (
-    <div className="col-md-3 col-sm-6 mb-5 " style={{minWidth: '100px', display: hide? 'none' : ''}}>
+    <div className="col-md-3 col-sm-6 mb-3 " style={{minWidth: '135px', display: hide? 'none' : ''}}>
       <Card className="card mx-auto" onClick={handleClick}>
-        <h6 className="card-header py-0 pl-2">
+        <h6 className="card-header py-0 pl-2" style = {{backgroundColor: '#C3C3E1'}}>
           {pokemonIndex}
         </h6>
         <Sprite className="card-img-top rounded mx-auto mt-2"
         src={imageUrl}/>
-        <h6 className="card-body mx-auto py-0">{name
-        .toLowerCase()
-        .split(" ")
-        .map(letters => letters.charAt(0).toUpperCase() + letters.substring(1))
-        .join(' ')}</h6>
-        <div className="mx-auto mb-2">
+        <h6 className="card-body mx-auto py-0 text-capitalize">{name}</h6>
+        <div className="mx-auto mb-3">
         {pokemonType.map((type : string) => (<span key = {type} className="mx-1 badge badge-pill badge-danger"
         style = {{backgroundColor: `${(Colors as any)[type]}`}}>{type}</span>))}
         </div>

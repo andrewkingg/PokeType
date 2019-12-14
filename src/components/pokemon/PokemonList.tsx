@@ -1,4 +1,4 @@
-import React, {useState, useEffect}from 'react';
+import React from 'react';
 import PokemonCard from './PokemonCard'
 type Pokemon = {
   name: string,
@@ -7,7 +7,7 @@ type Pokemon = {
 }
 interface Props{
   typeHandler: (pokemonType: string[], imageUrl: string, selectedName: string)=>void,
-  pokemon: Pokemon[]
+  pokemon: Pokemon[],
 }
 export const PokemonList: React.FC<Props> = ({typeHandler, pokemon}) => {
 

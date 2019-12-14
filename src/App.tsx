@@ -1,9 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState } from 'react';
+import React from 'react';
 import DashBoard from './components/layout/Dashboard'
 import Panel from './components/layout/Panel'
 import './App.css'
-import { render } from '@testing-library/react';
+
 const Resistances = {
   fairy: 0,
   bug: 0,
@@ -31,6 +31,7 @@ interface State {
   weaknesses: {},
   selectedPokemon: selectedPokemon,
   pokemon: Pokemon[]
+  shiny: boolean
 }
 
 interface selectedPokemon {
@@ -52,6 +53,7 @@ class App extends React.Component<Props, State>{
     weaknesses: Resistances,
     selectedPokemon: {selectedTypes:["grass","poison"], imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png?raw=true", name:"Bulbasaur"},
     pokemon: [],
+    shiny: false,
   }
 
   filterPokemon = (filter: string) => {
@@ -65,10 +67,15 @@ class App extends React.Component<Props, State>{
     this.setState({pokemon: this.permPokemon})
   }
 
+  toggleShiny = (toggledValue: boolean) => {
+    console.log(toggledValue);
+    this.setState({shiny: toggledValue})
+  }
+
   componentDidMount() {
     //get Pokemon
-    const url = "https://pokeapi.co/api/v2/pokemon?limit=30";
-    fetch(url)
+    const url = "https://pokeapi.co/api/v2/pokemon?limit=800";
+    fetch(url, {cache: "force-cache"})
       .then(result => result.json())
       .then(result => {
         this.setState({ pokemon: result.results })
@@ -104,21 +111,18 @@ class App extends React.Component<Props, State>{
   render() {
     return (
       <div className="App">
-        <div className='container' style={{minWidth:'90%'}}>
-          <div className="row">
-            <div className="col-12" style={{ backgroundColor: 'gray', minHeight: '70px' }}>
-              Hello
-          </div>
-          </div>
+                  <div className="banner card" style={{minWidth: '98vw', minHeight: '90px'}}/>
+        <div className='container mb-2' style={{minWidth:'80%', maxWidth: '80%'}}>
+
           <div className="row mt-3">
-            <div className="col-9 pl-0" style={{ backgroundColor: 'white', minHeight: '85vh', maxHeight: '85vh' }}>
+            <div className="col-9 pl-0" style={{ minHeight: '85vh', maxHeight: '100vh' }}>
               <div className="container px-5 py-3 overflow-auto card" style={{ backgroundColor: 'white', minHeight: '100%', maxHeight: '100%' }}>
                 <div className="row justify-content-md-center">
-                  <DashBoard pokemon={this.state.pokemon} typeHandler={this.typeHandler} />
+                  <DashBoard pokemon={this.state.pokemon} typeHandler={this.typeHandler}/>
                 </div>
               </div>
             </div>
-            <Panel filterPokemon = {this.filterPokemon} weakness={this.state.weaknesses} selectedPokemon={this.state.selectedPokemon}></Panel>
+            <Panel filterPokemon = {this.filterPokemon} weakness={this.state.weaknesses} selectedPokemon={this.state.selectedPokemon} toggleShiny={this.toggleShiny} shiny={this.state.shiny}></Panel>
           </div>
         </div>
       </div>)

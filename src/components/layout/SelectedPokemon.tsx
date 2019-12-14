@@ -1,22 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './WeaknessChart.css'
-import styled from 'styled-components'
-
-const Card = styled.div`
-    min-height: 30px;
-    min-width: 30px;
-    max-width: 30px;
-    max-height: 30px;
-    padding: 0;
-    margin: 1px;
-    font-size: 11px;
-    font-weight: 600;
-    padding-top: 9px;
-    border-radius: 6px;
-    border: .5px solid gray;
-    background-color: gray;
-    text-shadow: 2px 2px 2px rgba(104,104,97,0.54);
-`;
 
 const Colors = {
   bug: '#9CAB17',
@@ -44,7 +27,8 @@ interface Props {
     selectedTypes: string[],
     imageUrl: string,
     name: string,
-  }
+  },
+  shiny: boolean
 }
 
 interface State {
@@ -52,7 +36,7 @@ interface State {
   selectedPokemon: {}
 }
 
-const SelectedPokemon: React.FC<Props> = ({ selectedPokemon }) => {
+const SelectedPokemon: React.FC<Props> = ({ selectedPokemon, shiny}) => {
 
   const upperCaseFirstLetter = (word: string) => {
     return word.toLowerCase()
@@ -60,13 +44,34 @@ const SelectedPokemon: React.FC<Props> = ({ selectedPokemon }) => {
       .map(letters => letters.charAt(0).toUpperCase() + letters.substring(1))
   }
 
+  const shinyUrlConverter = (url: string, shiny: boolean) => {
+    if(shiny){
+      if(!url.includes("shiny")){
+      let array = url.split("/");
+      array.splice(array.length-1,0,"shiny")
+      return array.join("/");
+      }else {
+        return url;
+      }
+    } else {
+      if(url.includes("shiny")){
+        let array = url.split("/");
+        array.splice(array.length-2,1)
+        return array.join("/");
+        }else {
+          return url;
+        }
+    }
+  }
+  
   return (
     <div className="col" style={{minHeight: '150px'}}>
 
       <div className="container p-0" style={{ maxWidth: '90%', minWidth: '100px' }}>
-      <h6 className = 'text-center mb-0'>{upperCaseFirstLetter(selectedPokemon.name)}</h6>
+      <h6 className = 'text-center mb-0 text-capitalize'>{selectedPokemon.name}</h6>
         <div className="row">
-          <img className = "mx-auto" src={selectedPokemon.imageUrl}></img>
+          <img className = "mx-auto" src={shinyUrlConverter(selectedPokemon.imageUrl, shiny)}
+          alt="Loading"></img>
         </div>
         <div className="d-flex justify-content-center">{selectedPokemon.selectedTypes.map(type =>
           <h6 key = {type} className="col col-centered text-center badge badge-pill badge-secondary mx-2"

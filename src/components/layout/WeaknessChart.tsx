@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './WeaknessChart.css'
 import styled from 'styled-components'
 
@@ -95,6 +95,7 @@ class WeaknessChart extends React.Component<Props,State> {
             <Card className="badge badge-secondary" style = {{backgroundColor: `${(Colors as any)[type]}`}}>{type.substring(0,3).toUpperCase()}</Card>
             <Card className="badge badge-secondary" style = {{backgroundColor: `${(multiplierColors as any)[(this.props.weakness as any)[type]]}`}}>{this.getMultipliers((this.props.weakness as any)[type])}</Card>
           </TypeValuePair>)}
+          
         </div>
       </div>)
     }
